@@ -11,7 +11,6 @@ import com.shuyu.gsyvideoplayer.GSYVideoBaseManager;
 import com.shuyu.gsyvideoplayer.player.IPlayerManager;
 import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
 import com.shuyu.gsyvideoplayer.utils.CommonUtil;
-import com.shuyu.gsyvideoplayer.utils.GSYVideoType;
 import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
 
 import java.util.HashMap;

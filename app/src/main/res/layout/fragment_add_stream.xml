@@ -50,6 +50,16 @@
             android:maxLines="1"
             android:inputType="textUri"/>
 
+        <EditText
+            android:id="@+id/stream_hd_url"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="@string/add_stream_placeholder_url"
+            android:lines="1"
+            android:maxLines="1"
+            android:inputType="textUri"/>
+
         <Button
             android:id="@+id/save"
             android:layout_width="match_parent"

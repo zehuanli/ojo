@@ -74,6 +74,11 @@ public class GsyCameraView extends BaseCameraView implements View.OnClickListene
     }
 
     @Override
+    public void toggleResolution() {
+        // TODO: Not implemented
+    }
+
+    @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.fullscreen) {

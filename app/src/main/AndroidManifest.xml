@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Ojo">
         <activity
-            android:name=".ui.MainActivity"
+            android:name="it.danieleverducci.ojo.ui.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/Theme.Ojo"
             android:configChanges="orientation|screenSize">

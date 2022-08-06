@@ -44,10 +44,13 @@ public class SurveillanceFragment extends Fragment {
 
     private FragmentSurveillanceBinding binding;
     private final List<BaseCameraView> cameraViews = new ArrayList<>();
-    private boolean fullscreenCameraView = false;
+    private boolean isFullScreen = false;
+    private BaseCameraView fullScreenCameraView;
     private LinearLayout.LayoutParams cameraViewLayoutParams;
     private LinearLayout.LayoutParams rowLayoutParams;
     private LinearLayout.LayoutParams hiddenLayoutParams;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton fab;
+    private com.google.android.material.floatingactionbutton.FloatingActionButton fab2;
 
     @Override
     public View onCreateView(
@@ -69,6 +72,18 @@ public class SurveillanceFragment extends Fragment {
         );
 
         hiddenLayoutParams = new LinearLayout.LayoutParams(0, 0);
+
+        fab = getActivity().findViewById(R.id.fab);
+        fab2 = getActivity().findViewById(R.id.fab2);
+
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (isFullScreen) {
+                    fullScreenCameraView.toggleResolution();
+                }
+            }
+        });
 
         binding = FragmentSurveillanceBinding.inflate(inflater, container, false);
         return binding.getRoot();
@@ -119,7 +134,7 @@ public class SurveillanceFragment extends Fragment {
             }
         }
 
-        fullscreenCameraView = false;
+        isFullScreen = false;
         addAllCameras();
 
         // Start playback for all streams
@@ -131,8 +146,8 @@ public class SurveillanceFragment extends Fragment {
         ((MainActivity) requireActivity()).setOnBackButtonPressedListener(new OnBackButtonPressedListener() {
             @Override
             public boolean onBackPressed() {
-                if (fullscreenCameraView && cameraViews.size() > 1) {
-                    fullscreenCameraView = false;
+                if (isFullScreen && cameraViews.size() > 1) {
+                    isFullScreen = false;
                     showAllCameras();
                     return true;
                 }
@@ -183,8 +198,8 @@ public class SurveillanceFragment extends Fragment {
                         @Override
                         public void fullOrNot(BaseCameraView baseCameraView) {
                             // Toggle single/multi camera views
-                            fullscreenCameraView = !fullscreenCameraView;
-                            if (fullscreenCameraView) {
+                            isFullScreen = !isFullScreen;
+                            if (isFullScreen) {
                                 hideAllCameraViewsButNot(baseCameraView);
                             } else {
                                 showAllCameras();
@@ -213,6 +228,9 @@ public class SurveillanceFragment extends Fragment {
     }
 
     public void hideAllCameraViewsButNot(BaseCameraView baseCameraView) {
+        fab.hide();
+        fab2.show();
+        fullScreenCameraView = baseCameraView;
         View cameraView;
         if (baseCameraView.kind == VideoLibEnum.VLC)
             cameraView = baseCameraView.surfaceView;
@@ -221,7 +239,7 @@ public class SurveillanceFragment extends Fragment {
 
         for (BaseCameraView cm : cameraViews) {//stop other VideoView
             if (cm != baseCameraView) {
-                cm.stop();
+                cm.pause();
             }
         }
 
@@ -242,6 +260,8 @@ public class SurveillanceFragment extends Fragment {
     }
 
     public void showAllCameras() {
+        fab.show();
+        fab2.hide();
         for (int i = 0; i < binding.gridRowContainer.getChildCount(); i++) {
             LinearLayout row = (LinearLayout) binding.gridRowContainer.getChildAt(i);
             row.setLayoutParams(rowLayoutParams);

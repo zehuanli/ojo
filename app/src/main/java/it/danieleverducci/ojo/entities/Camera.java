@@ -6,11 +6,13 @@ public class Camera implements Serializable {
     private static final long serialVersionUID = -3837361587400158910L;
     private String name;
     private String rtspUrl;
-    private int enable =1; //启用: 1 ; 关闭: 0
+    private String rtspHDUrl;
+    private int enable = 1; //启用: 1 ; 关闭: 0
 
-    public Camera(String name, String rtspUrl) {
+    public Camera(String name, String rtspUrl, String rtspHDUrl) {
         this.name = name;
         this.rtspUrl = rtspUrl;
+        this.rtspHDUrl = rtspHDUrl;
     }
 
     public void setName(String name) {
@@ -21,12 +23,20 @@ public class Camera implements Serializable {
         this.rtspUrl = rtspUrl;
     }
 
+    public void setRtspHDUrl(String rtspHDUrl) {
+        this.rtspHDUrl = rtspHDUrl;
+    }
+
     public String getName() {
         return name;
     }
 
     public String getRtspUrl() {
         return rtspUrl;
+    }
+
+    public String getRtspHDUrl() {
+        return rtspHDUrl;
     }
 
     public int getEnable() {

@@ -11,6 +11,7 @@
     <string name="add_stream_name">Camera name</string>
     <string name="add_stream_save">Save</string>
     <string name="add_stream_invalid_url">Invalid RTSP url</string>
+    <string name="add_stream_invalid_hd_url">Invalid RTSP HD url</string>
     <string name="add_stream_invalid_url_dismiss">Dismiss</string>
     <string name="add_stream_error_saving">An error has occurred while saving configuration</string>
     <string name="add_stream">Please insert your camera\'s RTSP stream. Note that the URL differs from camera to camera: you can find the complete URL in your camera\'s settings or user manual.</string>

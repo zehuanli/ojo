@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.View;
 
 import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 
 import com.shuyu.gsyvideoplayer.GSYVideoManager;
@@ -55,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
                 navigateToFragment(R.id.action_homeToSettings);
             }
         });
+
+        binding.fab2.hide();
     }
 
     public void setOnBackButtonPressedListener(OnBackButtonPressedListener onBackButtonPressedListener) {

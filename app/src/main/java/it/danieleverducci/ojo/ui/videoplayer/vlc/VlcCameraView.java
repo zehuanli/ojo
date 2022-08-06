@@ -25,6 +25,8 @@ import it.danieleverducci.ojo.ui.videoplayer.VideoLibEnum;
  */
 public class VlcCameraView extends BaseCameraView {
     public MediaPlayer mediaPlayer;
+    private boolean isHD;
+    private String url;
     public IVLCVout ivlcVout;
     public LibVLC libvlc;
 
@@ -44,7 +46,9 @@ public class VlcCameraView extends BaseCameraView {
         ivlcVout.attachViews();
 
         // Load media and start playing
-        Media m = new Media(libvlc, Uri.parse(camera.getRtspUrl()));
+        isHD = false;
+        url = camera.getRtspUrl();
+        Media m = new Media(libvlc, Uri.parse(url));
         m.setHWDecoderEnabled(true, false);
         mediaPlayer.setMedia(m);
 
@@ -66,12 +70,14 @@ public class VlcCameraView extends BaseCameraView {
 
     @Override
     public void pause() {
-        mediaPlayer.pause();
+        mediaPlayer.stop();
     }
 
     @Override
     public void resume() {
-        startPlayback();
+        Media m = new Media(libvlc, Uri.parse(url));
+        m.setHWDecoderEnabled(true, false);
+        mediaPlayer.setMedia(m);
     }
 
     @Override
@@ -108,6 +114,24 @@ public class VlcCameraView extends BaseCameraView {
                 }
             }
         });
+    }
+
+    @Override
+    public void toggleResolution() {
+        String hdUrl = camera.getRtspHDUrl();
+        if (hdUrl != null && ! hdUrl.isEmpty()) {
+            isHD = ! isHD;
+            if (isHD) {
+                url = hdUrl;
+            } else {
+                url = camera.getRtspUrl();
+            }
+            mediaPlayer.stop();
+            Media m = new Media(libvlc, Uri.parse(url));
+            m.setHWDecoderEnabled(true, false);
+            mediaPlayer.setMedia(m);
+            mediaPlayer.play();
+        }
     }
 
 }

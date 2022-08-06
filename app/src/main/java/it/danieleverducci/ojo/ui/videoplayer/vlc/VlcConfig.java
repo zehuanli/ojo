@@ -3,7 +3,6 @@ package it.danieleverducci.ojo.ui.videoplayer.vlc;
 import android.content.Context;
 
 import org.videolan.libvlc.LibVLC;
-import org.videolan.libvlc.util.VLCUtil;
 
 import java.util.ArrayList;
 import java.util.Arrays;

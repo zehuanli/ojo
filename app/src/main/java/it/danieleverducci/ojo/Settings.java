@@ -13,7 +13,6 @@ import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Predicate;
 
 import it.danieleverducci.ojo.entities.Camera;
 

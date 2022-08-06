@@ -49,6 +49,7 @@ public class StreamUrlFragment extends Fragment {
             binding.streamName.setText(c.getName());
             binding.streamName.setHint(requireContext().getString(R.string.stream_list_default_camera_name).replace("{camNo}", (this.selectedCamera+1)+""));
             binding.streamUrl.setText(c.getRtspUrl());
+            binding.streamHdUrl.setText(c.getRtspHDUrl());
         }
 
         return binding.getRoot();
@@ -63,9 +64,16 @@ public class StreamUrlFragment extends Fragment {
             public void onClick(View view) {
                 // Check the field is filled
                 String url = binding.streamUrl.getText().toString();
-                if (!(url.startsWith("rtsp://") || url.startsWith("http://"))) {
+                if (!(url.startsWith("rtsp://") || url.startsWith("http://") || url.startsWith("https://"))) {
                     Snackbar.make(view, R.string.add_stream_invalid_url, Snackbar.LENGTH_LONG)
                         .setAction(R.string.add_stream_invalid_url_dismiss, null).show();
+                    return;
+                }
+
+                String hdUrl = binding.streamHdUrl.getText().toString();
+                if (! hdUrl.isEmpty() && ! (hdUrl.startsWith("rtsp://") || hdUrl.startsWith("http://") || hdUrl.startsWith("https://"))) {
+                    Snackbar.make(view, R.string.add_stream_invalid_hd_url, Snackbar.LENGTH_LONG)
+                            .setAction(R.string.add_stream_invalid_url_dismiss, null).show();
                     return;
                 }
 
@@ -77,9 +85,10 @@ public class StreamUrlFragment extends Fragment {
                     Camera c = settings.getCameras().get(StreamUrlFragment.this.selectedCamera);
                     c.setName(name);
                     c.setRtspUrl(url);
+                    c.setRtspHDUrl(hdUrl);
                 } else {
                     // Add stream to list
-                    settings.addCamera(new Camera(name, url));
+                    settings.addCamera(new Camera(name, url, hdUrl));
                 }
 
                 // Save

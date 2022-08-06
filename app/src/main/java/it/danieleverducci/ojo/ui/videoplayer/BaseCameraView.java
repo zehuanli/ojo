@@ -1,7 +1,6 @@
 package it.danieleverducci.ojo.ui.videoplayer;
 
 import android.view.SurfaceView;
-import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
@@ -37,6 +36,8 @@ public abstract class BaseCameraView {
     public abstract void destroy();
 
     public abstract void fullScreen(@Nullable FullEvent fullEvent);
+
+    public abstract void toggleResolution();
 
     public interface FullEvent {
         void fullOrNot(BaseCameraView cameraView);
