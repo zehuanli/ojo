@@ -5,15 +5,11 @@ import android.view.SurfaceView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
-import com.shuyu.gsyvideoplayer.video.base.GSYVideoPlayer;
-
 import it.danieleverducci.ojo.entities.Camera;
 
 public abstract class BaseCameraView {
     public Camera camera;
     public SurfaceView surfaceView;
-    public GSYVideoPlayer gsyVideoPlayer = null;
-    public VideoLibEnum kind;
 
     public BaseCameraView(FragmentActivity context, Camera camera) {
         this.camera = camera;

@@ -11,8 +11,6 @@ import android.view.View;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 
-import com.shuyu.gsyvideoplayer.GSYVideoManager;
-
 import it.danieleverducci.ojo.R;
 import it.danieleverducci.ojo.SharedPreferencesManager;
 import it.danieleverducci.ojo.databinding.ActivityMainBinding;
@@ -66,9 +64,6 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (this.onBackButtonPressedListener != null && this.onBackButtonPressedListener.onBackPressed())
             return;
-        if (GSYVideoManager.backFromWindowFull(this)) {
-            return;
-        }
         super.onBackPressed();
 
     }
@@ -76,19 +71,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        GSYVideoManager.onPause();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        GSYVideoManager.onResume();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        GSYVideoManager.releaseAllVideos();
     }
 
     public void navigateToFragment(int actionId) {

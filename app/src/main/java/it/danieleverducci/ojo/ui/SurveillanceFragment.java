@@ -2,6 +2,7 @@ package it.danieleverducci.ojo.ui;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,24 +14,16 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
-import com.shuyu.gsyvideoplayer.player.IjkPlayerManager;
-import com.shuyu.gsyvideoplayer.player.PlayerFactory;
-import com.shuyu.gsyvideoplayer.player.SystemPlayerManager;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import it.danieleverducci.ojo.R;
 import it.danieleverducci.ojo.Settings;
-import it.danieleverducci.ojo.SharedPreferencesManager;
 import it.danieleverducci.ojo.databinding.FragmentSurveillanceBinding;
 import it.danieleverducci.ojo.entities.Camera;
 import it.danieleverducci.ojo.ui.videoplayer.BaseCameraView;
 import it.danieleverducci.ojo.ui.videoplayer.vlc.VlcCameraView;
-import it.danieleverducci.ojo.ui.videoplayer.gsy.GsyCameraView;
-import it.danieleverducci.ojo.ui.videoplayer.VideoLibEnum;
 import it.danieleverducci.ojo.utils.DpiUtils;
-import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
 
 /**
  * Some streams to test:
@@ -38,8 +31,6 @@ import tv.danmaku.ijk.media.exo2.Exo2PlayerManager;
  * rtsp://demo:demo@ipvmdemo.dyndns.org:5541/onvif-media/media.amp?profile=profile_1_h264&sessiontimeout=60&streamtype=unicast
  */
 public class SurveillanceFragment extends Fragment {
-    public static VideoLibEnum videoLibEnum = VideoLibEnum.EXO;
-
     public final static String TAG = "SurveillanceFragment";
 
     private FragmentSurveillanceBinding binding;
@@ -48,7 +39,6 @@ public class SurveillanceFragment extends Fragment {
     private BaseCameraView fullScreenCameraView;
     private LinearLayout.LayoutParams cameraViewLayoutParams;
     private LinearLayout.LayoutParams rowLayoutParams;
-    private LinearLayout.LayoutParams hiddenLayoutParams;
     private com.google.android.material.floatingactionbutton.FloatingActionButton fab;
     private com.google.android.material.floatingactionbutton.FloatingActionButton fab2;
 
@@ -71,8 +61,6 @@ public class SurveillanceFragment extends Fragment {
                 1.0f
         );
 
-        hiddenLayoutParams = new LinearLayout.LayoutParams(0, 0);
-
         fab = getActivity().findViewById(R.id.fab);
         fab2 = getActivity().findViewById(R.id.fab2);
 
@@ -92,23 +80,6 @@ public class SurveillanceFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        setUseWhichVideoPlayer();
-    }
-
-    private void setUseWhichVideoPlayer() {
-        int whichlib = SharedPreferencesManager.useWhichLib(requireContext());
-        if (whichlib == VideoLibEnum.EXO.i) {
-            videoLibEnum = VideoLibEnum.EXO;
-            PlayerFactory.setPlayManager(Exo2PlayerManager.class);
-        } else if (whichlib == VideoLibEnum.VLC.i) {
-            videoLibEnum = VideoLibEnum.VLC;
-        } else if (whichlib == VideoLibEnum.IJK.i) {
-            videoLibEnum = VideoLibEnum.IJK;
-            PlayerFactory.setPlayManager(IjkPlayerManager.class);
-        } else if (whichlib == VideoLibEnum.SYSTEM.i) {
-            videoLibEnum = VideoLibEnum.SYSTEM;
-            PlayerFactory.setPlayManager(SystemPlayerManager.class);
-        }
     }
 
     @Override
@@ -177,7 +148,6 @@ public class SurveillanceFragment extends Fragment {
         disposeAllCameras();
     }
 
-
     private void addAllCameras() {
         Settings settings = Settings.fromDisk(requireActivity());
         List<Camera> cc = settings.getEnabledCameras();
@@ -231,15 +201,11 @@ public class SurveillanceFragment extends Fragment {
         fab.hide();
         fab2.show();
         fullScreenCameraView = baseCameraView;
-        View cameraView;
-        if (baseCameraView.kind == VideoLibEnum.VLC)
-            cameraView = baseCameraView.surfaceView;
-        else
-            cameraView = baseCameraView.gsyVideoPlayer;
+        View cameraView = baseCameraView.surfaceView;
 
         for (BaseCameraView cm : cameraViews) {//stop other VideoView
-            if (cm != baseCameraView) {
-                cm.pause();
+            if (cm != baseCameraView) {;
+                cm.stop();
             }
         }
 
@@ -251,11 +217,11 @@ public class SurveillanceFragment extends Fragment {
                 if (cameraView == cam) {
                     emptyRow = false;
                 } else {
-                    cam.setLayoutParams(hiddenLayoutParams);
+                    cam.setVisibility(View.GONE);
                 }
             }
             if (emptyRow)
-                row.setLayoutParams(hiddenLayoutParams);
+                row.setVisibility(View.GONE);
         }
     }
 
@@ -264,10 +230,10 @@ public class SurveillanceFragment extends Fragment {
         fab2.hide();
         for (int i = 0; i < binding.gridRowContainer.getChildCount(); i++) {
             LinearLayout row = (LinearLayout) binding.gridRowContainer.getChildAt(i);
-            row.setLayoutParams(rowLayoutParams);
+            row.setVisibility(View.VISIBLE);
             for (int j = 0; j < row.getChildCount(); j++) {
                 View cam = row.getChildAt(j);
-                cam.setLayoutParams(cameraViewLayoutParams);
+                cam.setVisibility(View.VISIBLE);
             }
             for (BaseCameraView cameraView : cameraViews) {
                 cameraView.startPlayback();
@@ -284,23 +250,10 @@ public class SurveillanceFragment extends Fragment {
         rowContainer.addView(cv.surfaceView, cameraViewLayoutParams);
         return cv;
     }
-    /**
-     * 生成gsy版本的视频播放
-     */
-    private BaseCameraView genGsy(Camera camera, LinearLayout rowContainer) {
-        GsyCameraView cv = new GsyCameraView(requireActivity(), camera);
-        rowContainer.addView(cv.gsyVideoPlayer, cameraViewLayoutParams);
-        return cv;
-    }
 
     private BaseCameraView addCameraView(Camera camera, LinearLayout rowContainer) {
         BaseCameraView cv;
-        if (videoLibEnum.i != VideoLibEnum.VLC.i) {
-            cv = genGsy(camera, rowContainer);
-        } else {
-            cv = genVlc(camera, rowContainer);
-        }
-        cv.kind = videoLibEnum;
+        cv = genVlc(camera, rowContainer);
         cameraViews.add(cv);
         return cv;
     }

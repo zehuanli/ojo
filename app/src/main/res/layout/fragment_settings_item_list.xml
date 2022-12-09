@@ -14,44 +14,6 @@
         android:layout_height="wrap_content"
         app:title="@string/app_name" />
 
-    <RadioGroup
-        android:id="@+id/radio_group"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
-        android:orientation="horizontal">
-
-        <RadioButton
-            android:id="@+id/exo_r"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="exoPlayer" />
-
-        <RadioButton
-            android:id="@+id/vlc_r"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="vlc" />
-
-        <RadioButton
-            android:id="@+id/ijk_r"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="ijkPlayer" />
-
-        <RadioButton
-            android:id="@+id/sys_r"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:text="mediaPlayer" />
-
-    </RadioGroup>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/list"
         android:name="it.danieleverducci.ojo.ui.SettingsFragment"

@@ -7,18 +7,18 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewTreeObserver;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
-import org.videolan.libvlc.IVLCVout;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
+import org.videolan.libvlc.interfaces.IVLCVout;
 
 import it.danieleverducci.ojo.entities.Camera;
 import it.danieleverducci.ojo.ui.SurveillanceFragment;
 import it.danieleverducci.ojo.ui.videoplayer.BaseCameraView;
-import it.danieleverducci.ojo.ui.videoplayer.VideoLibEnum;
 
 /**
  * Contains all entities (views and java entities) related to a camera stream viewer
@@ -33,10 +33,9 @@ public class VlcCameraView extends BaseCameraView {
     public VlcCameraView(FragmentActivity context, Camera camera) {
         super(context, camera);
         surfaceView = new SurfaceView(context);
-        kind = VideoLibEnum.VLC;
         this.libvlc = VlcConfig.getInstance().getLibVlc(context);
-        SurfaceHolder holder = surfaceView.getHolder();
-        holder.setKeepScreenOn(true);
+        SurfaceHolder surfaceHolder = surfaceView.getHolder();
+        surfaceHolder.setKeepScreenOn(true);
         // Create media player
         mediaPlayer = new MediaPlayer(libvlc);
 
@@ -48,9 +47,6 @@ public class VlcCameraView extends BaseCameraView {
         // Load media and start playing
         isHD = false;
         url = camera.getRtspUrl();
-        Media m = new Media(libvlc, Uri.parse(url));
-        m.setHWDecoderEnabled(true, false);
-        mediaPlayer.setMedia(m);
 
         // Register for view resize events
         final ViewTreeObserver observer = surfaceView.getViewTreeObserver();
@@ -65,24 +61,32 @@ public class VlcCameraView extends BaseCameraView {
      */
     @Override
     public void startPlayback() {
+        if (! ivlcVout.areViewsAttached()) {
+            ivlcVout.setVideoView(surfaceView);
+            ivlcVout.attachViews();
+        }
+
+        Media m = new Media(libvlc, Uri.parse(url));
+        m.setHWDecoderEnabled(true, false);
+        mediaPlayer.setMedia(m);
+
         mediaPlayer.play();
     }
 
     @Override
     public void pause() {
-        mediaPlayer.stop();
+        mediaPlayer.pause();
     }
 
     @Override
     public void resume() {
-        Media m = new Media(libvlc, Uri.parse(url));
-        m.setHWDecoderEnabled(true, false);
-        mediaPlayer.setMedia(m);
+        mediaPlayer.play();
     }
 
     @Override
     public void stop() {
-        destroy();
+        mediaPlayer.stop();
+        ivlcVout.detachViews();
     }
 
     /**
@@ -96,8 +100,7 @@ public class VlcCameraView extends BaseCameraView {
         }
 
         mediaPlayer.stop();
-        final IVLCVout vout = mediaPlayer.getVLCVout();
-        vout.detachViews();
+        ivlcVout.detachViews();
         libvlc.release();
         libvlc = null;
         mediaPlayer.release();
@@ -134,4 +137,9 @@ public class VlcCameraView extends BaseCameraView {
         }
     }
 
+    @NonNull
+    @Override
+    public String toString() {
+        return url;
+    }
 }
