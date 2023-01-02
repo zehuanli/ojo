@@ -9,8 +9,8 @@ android {
         applicationId "it.danieleverducci.ojo"
         minSdkVersion 21
         targetSdkVersion 33
-        versionCode 4
-        versionName "0.1.0"
+        versionCode 5
+        versionName "1.0.0"
 
         vectorDrawables.useSupportLibrary = true
 
@@ -38,7 +38,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-ui:2.5.3'
     implementation 'org.videolan.android:libvlc-all:3.4.1'
     //implementation 'de.mrmaffen:libvlc-android:2.1.12@aar'
-    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
 }

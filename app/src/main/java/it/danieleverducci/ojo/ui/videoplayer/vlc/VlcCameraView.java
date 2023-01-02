@@ -109,12 +109,14 @@ public class VlcCameraView extends BaseCameraView {
 
     @Override
     public void fullScreen(@Nullable FullEvent fullEvent) {
-        surfaceView.setOnClickListener(new View.OnClickListener() {
+        surfaceView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
-            public void onClick(View v) {
+            public boolean onLongClick(View v) {
                 if (fullEvent != null) {
                     fullEvent.fullOrNot(VlcCameraView.this);
+                    return true;
                 }
+                return false;
             }
         });
     }
