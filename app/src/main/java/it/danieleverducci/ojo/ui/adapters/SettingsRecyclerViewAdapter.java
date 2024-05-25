@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import it.danieleverducci.ojo.R;
 import it.danieleverducci.ojo.databinding.FragmentSettingsItemBinding;
-import it.danieleverducci.ojo.entities.Camera;
+import it.danieleverducci.ojo.db.Camera;
 import it.danieleverducci.ojo.utils.ItemMoveCallback;
 
 import java.util.Collections;
@@ -46,12 +46,12 @@ public class SettingsRecyclerViewAdapter extends RecyclerView.Adapter<SettingsRe
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        String cameraName = mValues.get(position).getName();
+        String cameraName = mValues.get(position).name;
         if (cameraName == null || cameraName.length() == 0)
             cameraName = holder.name.getContext().getString(R.string.stream_list_default_camera_name).replace("{camNo}", (position + 1) + "");
         holder.name.setText(cameraName);
-        holder.url.setText(mValues.get(position).getRtspUrl());
-        holder.enableSwitch.setChecked(mValues.get(position).getEnable() == 1);
+        holder.url.setText(mValues.get(position).rtspUrl);
+        holder.enableSwitch.setChecked(mValues.get(position).isEnabled);
 
         holder.root.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,7 +69,7 @@ public class SettingsRecyclerViewAdapter extends RecyclerView.Adapter<SettingsRe
         holder.enableSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                mValues.get(holder.getBindingAdapterPosition()).setEnable(isChecked ? 1 : 0);
+                mValues.get(holder.getBindingAdapterPosition()).isEnabled = isChecked;
             }
         });
     }

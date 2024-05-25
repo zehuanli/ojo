@@ -2,7 +2,6 @@ package it.danieleverducci.ojo.ui;
 
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,9 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.danieleverducci.ojo.R;
-import it.danieleverducci.ojo.Settings;
 import it.danieleverducci.ojo.databinding.FragmentSurveillanceBinding;
-import it.danieleverducci.ojo.entities.Camera;
+import it.danieleverducci.ojo.db.AppDatabase;
+import it.danieleverducci.ojo.db.Camera;
 import it.danieleverducci.ojo.ui.videoplayer.BaseCameraView;
 import it.danieleverducci.ojo.ui.videoplayer.vlc.VlcCameraView;
 import it.danieleverducci.ojo.utils.DpiUtils;
@@ -149,8 +148,7 @@ public class SurveillanceFragment extends Fragment {
     }
 
     private void addAllCameras() {
-        Settings settings = Settings.fromDisk(requireActivity());
-        List<Camera> cc = settings.getEnabledCameras();
+        List<Camera> cc = AppDatabase.getInstance(getContext()).cameraDAO().getAll();
 
         int[] gridSize = calcGridDimensionsBasedOnNumberOfElements(cc.size());
         int camIdx = 0;

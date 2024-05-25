@@ -16,7 +16,7 @@ import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaPlayer;
 import org.videolan.libvlc.interfaces.IVLCVout;
 
-import it.danieleverducci.ojo.entities.Camera;
+import it.danieleverducci.ojo.db.Camera;
 import it.danieleverducci.ojo.ui.SurveillanceFragment;
 import it.danieleverducci.ojo.ui.videoplayer.BaseCameraView;
 
@@ -46,7 +46,7 @@ public class VlcCameraView extends BaseCameraView {
 
         // Load media and start playing
         isHD = false;
-        url = camera.getRtspUrl();
+        url = camera.rtspUrl;
 
         // Register for view resize events
         final ViewTreeObserver observer = surfaceView.getViewTreeObserver();
@@ -123,13 +123,13 @@ public class VlcCameraView extends BaseCameraView {
 
     @Override
     public void toggleResolution() {
-        String hdUrl = camera.getRtspHDUrl();
+        String hdUrl = camera.rtspHDUrl;
         if (hdUrl != null && ! hdUrl.isEmpty()) {
             isHD = ! isHD;
             if (isHD) {
                 url = hdUrl;
             } else {
-                url = camera.getRtspUrl();
+                url = camera.rtspUrl;
             }
             mediaPlayer.stop();
             Media m = new Media(libvlc, Uri.parse(url));

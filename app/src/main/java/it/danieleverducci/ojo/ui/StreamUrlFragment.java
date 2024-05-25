@@ -13,23 +13,19 @@ import androidx.navigation.fragment.NavHostFragment;
 import com.google.android.material.snackbar.Snackbar;
 
 import it.danieleverducci.ojo.R;
-import it.danieleverducci.ojo.Settings;
 import it.danieleverducci.ojo.databinding.FragmentAddStreamBinding;
-import it.danieleverducci.ojo.entities.Camera;
+import it.danieleverducci.ojo.db.AppDatabase;
+import it.danieleverducci.ojo.db.Camera;
 
 public class StreamUrlFragment extends Fragment {
     public static final String ARG_CAMERA = "arg_camera";
 
     private FragmentAddStreamBinding binding;
-    private Settings settings;
     private Integer selectedCamera = null;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Load existing settings (if any)
-        settings = Settings.fromDisk(requireContext());
     }
 
     @Override
@@ -45,11 +41,11 @@ public class StreamUrlFragment extends Fragment {
         if (args != null && args.containsKey(ARG_CAMERA)) {
             this.selectedCamera = args.getInt(ARG_CAMERA);
 
-            Camera c = settings.getCameras().get(this.selectedCamera);
-            binding.streamName.setText(c.getName());
+            Camera c = AppDatabase.getInstance(getContext()).cameraDAO().getAll().get(this.selectedCamera);
+            binding.streamName.setText(c.name);
             binding.streamName.setHint(requireContext().getString(R.string.stream_list_default_camera_name).replace("{camNo}", (this.selectedCamera+1)+""));
-            binding.streamUrl.setText(c.getRtspUrl());
-            binding.streamHdUrl.setText(c.getRtspHDUrl());
+            binding.streamUrl.setText(c.rtspUrl);
+            binding.streamHdUrl.setText(c.rtspHDUrl);
         }
 
         return binding.getRoot();
@@ -82,19 +78,13 @@ public class StreamUrlFragment extends Fragment {
 
                 if (StreamUrlFragment.this.selectedCamera != null) {
                     // Update camera
-                    Camera c = settings.getCameras().get(StreamUrlFragment.this.selectedCamera);
-                    c.setName(name);
-                    c.setRtspUrl(url);
-                    c.setRtspHDUrl(hdUrl);
+                    Camera c = AppDatabase.getInstance(getContext()).cameraDAO().getAll().get(StreamUrlFragment.this.selectedCamera);
+                    c.name = name;
+                    c.rtspUrl = url;
+                    c.rtspHDUrl = hdUrl;
                 } else {
                     // Add stream to list
-                    settings.addCamera(new Camera(name, url, hdUrl));
-                }
-
-                // Save
-                if (!settings.save()) {
-                    Snackbar.make(view, R.string.add_stream_error_saving, Snackbar.LENGTH_LONG).show();
-                    return;
+                    AppDatabase.getInstance(getContext()).cameraDAO().insert(new Camera(name, url, hdUrl));
                 }
 
                 // Back to first fragment

@@ -122,27 +122,35 @@ public class MainActivity extends AppCompatActivity {
     @SuppressLint("ClickableViewAccessibility")
     private void setDragListener(FloatingActionButton fab) {
         fab.setOnTouchListener(new View.OnTouchListener() {
-            private float dX, dY;
-            private int lastAction;
+            private float initialTouchX;
+            private float initialTouchY;
+            private boolean isDragging;
+            private final int CLICK_DRAG_TOLERANCE = 10;
 
             @Override
-            public boolean onTouch(View view, MotionEvent event) {
-                switch (event.getActionMasked()) {
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        dX = view.getX() - event.getRawX();
-                        dY = view.getY() - event.getRawY();
-                        lastAction = MotionEvent.ACTION_DOWN;
+                        initialTouchX = event.getRawX();
+                        initialTouchY = event.getRawY();
+                        isDragging = false;
                         return true;
 
                     case MotionEvent.ACTION_MOVE:
-                        view.setX(event.getRawX() + dX);
-                        view.setY(event.getRawY() + dY);
-                        lastAction = MotionEvent.ACTION_MOVE;
+                        float deltaX = Math.abs(event.getRawX() - initialTouchX);
+                        float deltaY = Math.abs(event.getRawY() - initialTouchY);
+                        if (deltaX > CLICK_DRAG_TOLERANCE || deltaY > CLICK_DRAG_TOLERANCE) {
+                            isDragging = true;
+                            // Handle dragging the view
+                            v.setX(event.getRawX() - v.getWidth());
+                            v.setY(event.getRawY() - v.getHeight() / 2);
+                        }
                         return true;
 
                     case MotionEvent.ACTION_UP:
-                        if (lastAction == MotionEvent.ACTION_DOWN) {
-                            view.performClick();
+                        if (!isDragging) {
+                            // It was a click, pass the click event to the listener
+                            v.performClick();
                         }
                         return true;
 

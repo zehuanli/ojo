@@ -5,7 +5,7 @@ import android.view.SurfaceView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.FragmentActivity;
 
-import it.danieleverducci.ojo.entities.Camera;
+import it.danieleverducci.ojo.db.Camera;
 
 public abstract class BaseCameraView {
     public Camera camera;
