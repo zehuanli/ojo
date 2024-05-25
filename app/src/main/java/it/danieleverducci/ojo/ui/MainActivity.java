@@ -1,15 +1,19 @@
 package it.danieleverducci.ojo.ui;
 
+import android.annotation.SuppressLint;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import it.danieleverducci.ojo.R;
 import it.danieleverducci.ojo.SharedPreferencesManager;
@@ -54,6 +58,9 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.fab2.hide();
+
+        setDragListener(binding.fab);
+        setDragListener(binding.fab2);
     }
 
     public void setOnBackButtonPressedListener(OnBackButtonPressedListener onBackButtonPressedListener) {
@@ -110,5 +117,39 @@ public class MainActivity extends AppCompatActivity {
     public void toggleRotationEnabledSetting() {
         this.rotationEnabledSetting = !this.rotationEnabledSetting;
         this.setRequestedOrientation(this.rotationEnabledSetting ? ActivityInfo.SCREEN_ORIENTATION_FULL_SENSOR : ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private void setDragListener(FloatingActionButton fab) {
+        fab.setOnTouchListener(new View.OnTouchListener() {
+            private float dX, dY;
+            private int lastAction;
+
+            @Override
+            public boolean onTouch(View view, MotionEvent event) {
+                switch (event.getActionMasked()) {
+                    case MotionEvent.ACTION_DOWN:
+                        dX = view.getX() - event.getRawX();
+                        dY = view.getY() - event.getRawY();
+                        lastAction = MotionEvent.ACTION_DOWN;
+                        return true;
+
+                    case MotionEvent.ACTION_MOVE:
+                        view.setX(event.getRawX() + dX);
+                        view.setY(event.getRawY() + dY);
+                        lastAction = MotionEvent.ACTION_MOVE;
+                        return true;
+
+                    case MotionEvent.ACTION_UP:
+                        if (lastAction == MotionEvent.ACTION_DOWN) {
+                            view.performClick();
+                        }
+                        return true;
+
+                    default:
+                        return false;
+                }
+            }
+        });
     }
 }
